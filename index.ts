@@ -1,4 +1,5 @@
 import BinarySearchTree from './BinarySearchTree.js';
+import esserializer from 'esserializer';
 
 let bst = new BinarySearchTree();
 
@@ -22,8 +23,9 @@ bst.insert(14, "fourteen");
 bst.insert(16, "sixteen");
 bst.insert(17, "seventeen");
 
-
-bst.remove(170);
+bst.remove(9)
+bst.remove(17)
 
 console.log(bst.dfsInOrder())
 console.log(bst.isValidTree())
+console.log(esserializer.serialize(bst))

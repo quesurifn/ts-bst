@@ -24,8 +24,7 @@ class Tree {
             return null;
         }
 
-        let current = this.root;
-
+        let current = startingNode;
         while(current) {
             if(current.left == null) {
                 return current;
@@ -114,39 +113,81 @@ class Tree {
             return null
         }
 
-        let current = this.root;
+        let current: TreeNode = this.root;
+        let parent:  TreeNode = null;
 
         while(current) {
             // is leaf
             if(key === current.key) {
                 if (!current.left && !current.right) {
-                    console.log("is leaf")
-                    current = null;
+                    if (parent.left === current) {
+                        parent.left = null;
+                    }
+                    if (parent.right === current) {
+                        parent.right = null;
+                    }
+                    this._count--;
                     return this;
                 }
 
                 if(current.left === null) {
-                    current = current.right;
+                    if (parent.left === current) {
+                        parent.left = current.right;
+                    }
+                    if (parent.right === current) {
+                        parent.right = current.right;
+                    }
+
+                    this._count--;
                     return this;
                 }
 
                 if(current.right === null) {
-                    current = current.left;
+                    if (parent.left === current) {
+                        parent.left = current.left;
+                    }
+                    if (parent.right === current) {
+                        parent.right = current.left;
+                    }
+
+                    this._count--;
                     return this;
                 }
 
                 if(current.right && current.left) {
-                    console.log("right and left")
-                    current = this.min(current.right)
-                    continue;
+                    let leftMost = this.min(current.right);
+                    this.remove(leftMost.key);
+
+                    if(!parent) {
+                        this.root = leftMost;
+                        this.root.left = current.left;
+                        this.root.right = current.right;
+                        return this;
+                    }
+
+                    if(parent.left === current) {
+                        parent.left = leftMost;
+                        return this;
+                    }
+                    if(parent.right === current) {
+                        parent.right = leftMost;
+                        return this;
+                    }
+
+                    this._count--;
+                    return this;
+
                 }
+                     
             }
 
             if(key < current.key) {
+                parent = current;
                 current = current.left;
             }
 
             if(key > current.key) {
+                parent = current;
                 current = current.right;
             } 
         }
@@ -179,15 +220,17 @@ class Tree {
             if(currentLeft.left === null) {
                 break;
             }
-            if(currentLeft.left !== null) {
-                // If the current node is less than the child node
-                // Then we know that the tree is not valid because the child node 
-                // should be greater than the current node because we're going right
-                if(currentLeft.key < currentLeft.left.key) {
-                    isValidLeft = false;
-                }
-                currentLeft = currentLeft.left;
+
+            // If the current node is less than the child node
+            // Then we know that the tree is not valid because the child node 
+            // should be greater than the current node because we're going right
+            console.log("L_PREV", currentLeft.key)
+            console.log("L_NEXT", currentLeft.left.key)
+            if(currentLeft.key < currentLeft.left.key) {
+                isValidLeft = false;
             }
+                currentLeft = currentLeft.left;
+            
         }
         // Traverse Right
         let isValidRight = true;
@@ -198,19 +241,21 @@ class Tree {
                 break;
             }
 
-            if(currentRight.right !== null) {
-                // If the current node is greater than the child node
-                // Then we know that the tree is not valid because the child node 
-                // should be greater than the current node because we're going right
-                if(currentRight.key > currentRight.right.key) {
-                    isValidRight = false;
-                }
-                currentRight = currentRight.right;
+            // If the current node is greater than the child node
+            // Then we know that the tree is not valid because the child node 
+            // should be greater than the current node because we're going right
+
+            console.log("R_PREV: ", currentRight.key)
+            console.log("R_NEXT: ", currentRight.right.key)
+            if(currentRight.key > currentRight.right.key) {
+                isValidRight = false;
             }
+            currentRight = currentRight.right;
         }
 
         return isValidLeft && isValidRight;
     }
+
 }
 
 export default Tree;
